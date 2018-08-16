@@ -12,4 +12,4 @@ DoubleX2
 
 ### Building
 
-`cabal new-build`
+`cabal new-build --with-compiler="your home directory/ghc/inplace/bin/ghc-stage2" --allow-newer`
