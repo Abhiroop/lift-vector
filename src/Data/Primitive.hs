@@ -1,12 +1,26 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
-module Data.Primitive where
+module Data.Primitive
+  ( FloatX4,
+    DoubleX2,
+
+    nullVector,
+    vectorSize,
+    elementSize,
+    broadcastVector,
+    mapVector,
+    zipVector,
+    foldVector,
+    sumVector,
+    packVector,
+    unpackVector
+  ) where
 
 import Data.Internal.FloatX4
 import Data.Internal.DoubleX2
 
 -- | The SIMD vector type class
-
 class (Num v, Real (Elem v)) => SIMDVector v where
 
     type Elem v
@@ -14,7 +28,7 @@ class (Num v, Real (Elem v)) => SIMDVector v where
     type ElemTuple v
 
     nullVector       :: v
-
+-- | The number of scalar element inside each vector
     vectorSize       :: v -> Int
 -- | The size of each element in bytes
     elementSize      :: v -> Int
@@ -77,39 +91,3 @@ instance SIMDVector DoubleX2 where
   foldVector         = foldDoubleX2
   packVector         = packDoubleX2
   unpackVector       = unpackDoubleX2
-
-
--- helper functions, move to a separate module
-
-
--- sizeOfVec :: Int
--- sizeOfVec = 4
-
--- evalPolyVec :: Float -> [Float] -> Float
--- evalPolyVec value coeffs = go (splitEvery sizeOfVec coeffs) (length coeffs)
---   where
---     go [[x]] _    = x
---     go (x:xs) len =
---       let [(F# a), (F# b), (F# c), (F# d)] = x
---           (F# val)                         = value
---           packed_coeff                     = packFloatX4# (# a, b, c, d #)
---           vec_val                          = broadcastFloatX4# val
---           step_length                      = len - sizeOfVec
---       in (go' packed_coeff vec_val step_length) + (go xs step_length)
---       where
---         go' pc _ 0 =
---           let (# a, b, c, d #) = unpackFloatX4# pc
---           in ((F# a) * value ^ 3) +
---              ((F# b) * value ^ 2) +
---              ((F# c) * value) +
---              (F# d)
---         go' pc v l =
---           let t = (timesFloatX4# pc v)
---           in go' t v (l - 1)
-
-
--- evalPoly :: Float -> [Float] -> Float
--- evalPoly value coeffs = go coeffs (length coeffs - 1)
---   where
---     go [] _ = 0
---     go (x:xs) len = (x * (value ^ len)) + go xs (len - 1)

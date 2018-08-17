@@ -61,10 +61,11 @@ library
 
   ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans
   -- Directories containing source files.
-  hs-source-dirs:      src
+  hs-source-dirs:      src, src/example
   exposed-modules:     Data.Primitive
   other-modules:       Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
+                     , Polynomial
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
