@@ -63,10 +63,23 @@ library
   -- Directories containing source files.
   hs-source-dirs:      src, src/example
   exposed-modules:     Data.Primitive
+                     , Data.VecList
   other-modules:       Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Polynomial
+                     , Utils
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
   
+executable polynomial 
+  hs-source-dirs:      src, src/example
+  main-is:             Main.hs
+  build-depends:       base >=4.10 && <4.11
+  other-modules:       Data.Primitive
+                     , Data.Internal.FloatX4
+                     , Data.Internal.DoubleX2
+                     , Data.VecList
+                     , Utils
+  ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans
+  default-language:    Haskell2010

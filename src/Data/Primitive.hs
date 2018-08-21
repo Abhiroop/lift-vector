@@ -13,7 +13,8 @@ module Data.Primitive
     foldVector,
     sumVector,
     packVector,
-    unpackVector
+    unpackVector,
+
   ) where
 
 import Data.Internal.FloatX4
