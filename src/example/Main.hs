@@ -56,7 +56,7 @@ dotp xs ys = sum $ zipWith (*) xs ys
 -- Take design verdict.
 dotVec :: [Float] -> [Float] -> Float
 dotVec xs ys = fold   (\x y -> x + y :: FloatX4) 0 $
-               zipVec (\x y -> x * y :: FloatX4)
+               zipVec (\x y -> x * y :: FloatX4) (\x y -> x * y :: Float)
                (toVecList xs)
                (toVecList ys)
 

@@ -7,11 +7,12 @@ module Data.VecList
   , fold
   , zipVec) where
 
+import Control.Monad
 import Data.Primitive
+import Data.Maybe
 import Utils
 import Prelude hiding (foldr)
 
--- type VectorSize = Int
 
 newtype VecList a = VecList [a]
   deriving (Show, Eq)
@@ -54,13 +55,21 @@ foldFloatX4 f seed (VecList xs) =
 -- foldDouble = undefined
 
 zipFloatX4 :: (FloatX4 -> FloatX4 -> FloatX4)
+           -> (Float   -> Float   -> Float)
            -> VecList Float
            -> VecList Float
            -> VecList Float
-zipFloatX4 f (VecList xs) (VecList ys) =
+zipFloatX4 f g (VecList xs) (VecList ys) =
   let l_1 = splitEvery 4 xs
       l_2 = splitEvery 4 ys
-   in undefined
+      (vec_l_1, seq_l_1) = partition (\x -> length x == 4) l_1
+      (vec_l_2, seq_l_2) = partition (\x -> length x == 4) l_2
+      vect_l_1 = map (packVector . fromMaybe defaultTuple4 . tuplify4) vec_l_1
+      vect_l_2 = map (packVector . fromMaybe defaultTuple4 . tuplify4) vec_l_2
+      zipped_l = zipWith f vect_l_1 vect_l_2
+      vec_l = concatMap ( fromMaybe defaultList4 . untuplify4 . unpackVector) zipped_l
+      seq_l = zipWith g (join seq_l_1) (join seq_l_2)
+   in VecList $ vec_l ++ seq_l
 
 zipDouble :: DoubleX2 -> DoubleX2 -> DoubleX2
           -> VecList Double
@@ -69,10 +78,10 @@ zipDouble :: DoubleX2 -> DoubleX2 -> DoubleX2
 zipDouble = undefined
 -- This typeclass allows you to polymorphic on the type of Float, Double, Int8..etc
 -- The Veclist constructor will allow to determine the size of the vector
-class (Num a) => ArithVecList a b where
+class (Num a, Num b) => ArithVecList a b where
   -- | The folding function should be commutative
   fold      :: (a -> a -> a) -> b -> VecList b -> b
-  zipVec    :: (a -> a -> a) -> VecList b -> VecList b -> VecList b
+  zipVec    :: (a -> a -> a) -> (b -> b -> b) -> VecList b -> VecList b -> VecList b
 
 instance ArithVecList FloatX4 Float where
   fold = foldFloatX4
