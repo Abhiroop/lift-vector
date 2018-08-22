@@ -53,7 +53,9 @@ dotp xs ys = sum $ zipWith (*) xs ys
 -- Can we hide this using template haskell?
 dotVec :: [Float] -> [Float] -> Float
 dotVec xs ys =
-  fold (\x y -> x + y :: FloatX4) (\x y -> x + y :: Float) 0 $
+  sum $
+  fromVecList $
+  --fold (\x y -> x + y :: FloatX4) (\x y -> x + y :: Float) 0 $
   zipVec
     (\x y -> x * y :: FloatX4)
     (\x y -> x * y :: Float)
@@ -68,5 +70,5 @@ main = do
   -- print $ evalPolyFold 0.2 [1, 1, 1, 1, 1]
   -- print $ evalPoly 0.2 [1, 1, 1, 1, 1]
   -- print $ evalPolyVec 0.2 [1, 1, 1, 1, 1]
-  print $ dotVec [1..100000000] [1..100000000]
-  print $ dotVec [1,2,3,4,5] [1,2,3,4,5]
+  print $ dotVec [1..10000000] [1..10000000]
+  --print $ dotVec [1,2,3,4,5] [1,2,3,4,5]

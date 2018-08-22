@@ -61,7 +61,14 @@ foldFloatX4 ::
   -> Float
   -> VecList Float
   -> Float
-foldFloatX4 f g seed (VecList xs) =
+foldFloatX4 f g seed (VecList xs) = -- go seed xs'
+  -- where
+  --   go acc [] = acc
+  --   go acc (x1:x2:x3:x4:y1:y2:y3:y4:xs) =
+  --     let op = f (packVector (x1,x2,x3,x4)) (packVector (y1,y2,y3,y4))
+  --      in go (g (foldVector g op) acc) xs
+  --   go acc (x:xs) = go (g x acc) xs
+
   let l_1 = splitEvery 4 xs
       (vec_l_1, seq_l_1) = partition (\x -> length x == 4) l_1
       vect_l_1 = map (packVector . fromMaybe defaultTuple4 . tuplify4) vec_l_1
@@ -83,23 +90,22 @@ foldDoubleX2 f g seed (VecList xs) =
       folded_seq = foldr g seed (join seq_l_1)
   in g (foldVector g folded_vec) folded_seq
 
+-- Currently assuming same length list
 zipFloatX4 ::
      (FloatX4 -> FloatX4 -> FloatX4)
   -> (Float -> Float -> Float)
   -> VecList Float
   -> VecList Float
   -> VecList Float
-zipFloatX4 f g (VecList xs) (VecList ys) =
-  let l_1 = splitEvery 4 xs
-      l_2 = splitEvery 4 ys
-      (vec_l_1, seq_l_1) = partition (\x -> length x == 4) l_1
-      (vec_l_2, seq_l_2) = partition (\x -> length x == 4) l_2
-      vect_l_1 = map (packVector . fromMaybe defaultTuple4 . tuplify4) vec_l_1
-      vect_l_2 = map (packVector . fromMaybe defaultTuple4 . tuplify4) vec_l_2
-      zipped_l = zipWith f vect_l_1 vect_l_2
-      vec_l = concatMap (untuplify4 . unpackVector) zipped_l
-      seq_l = zipWith g (join seq_l_1) (join seq_l_2)
-  in VecList $ vec_l ++ seq_l
+zipFloatX4 f g (VecList xs') (VecList ys') = VecList (go xs' ys')
+  where
+    go [] _ = []
+    go _ [] = []
+    go (x1:x2:x3:x4:xs) (y1:y2:y3:y4:ys) =
+      let op = f (packVector (x1,x2,x3,x4)) (packVector (y1,y2,y3,y4))
+          (a,b,c,d) = unpackVector op
+       in a : b : c : d : (go xs ys)
+    go (x:xs) (y:ys) = (g x y) : (go xs ys)
 
 zipDoubleX2 ::
      (DoubleX2 -> DoubleX2 -> DoubleX2)
