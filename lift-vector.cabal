@@ -81,5 +81,5 @@ executable polynomial
                      , Data.Internal.DoubleX2
                      , Data.VecList
                      , Utils
-  ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans
+  ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans -fprof-auto -prof
   default-language:    Haskell2010

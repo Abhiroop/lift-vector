@@ -55,26 +55,27 @@ instance ArithVecList DoubleX2 Double where
   fold = foldDoubleX2
   zipVec = zipDoubleX2
 
+{-# INLINE foldFloatX4 #-}
 foldFloatX4 ::
      (FloatX4 -> FloatX4 -> FloatX4)
   -> (Float -> Float -> Float)
   -> Float
   -> VecList Float
   -> Float
-foldFloatX4 f g seed (VecList xs) = -- go seed xs'
-  -- where
-  --   go acc [] = acc
-  --   go acc (x1:x2:x3:x4:y1:y2:y3:y4:xs) =
-  --     let op = f (packVector (x1,x2,x3,x4)) (packVector (y1,y2,y3,y4))
-  --      in go (g (foldVector g op) acc) xs
-  --   go acc (x:xs) = go (g x acc) xs
+foldFloatX4 f g seed (VecList xs') = go seed xs'
+  where
+    go acc [] = acc
+    go acc (x1:x2:x3:x4:y1:y2:y3:y4:xs) =
+      let op = f (packVector (x1,x2,x3,x4)) (packVector (y1,y2,y3,y4))
+       in go (g (foldVector g op) acc) xs
+    go acc (x:xs) = go (g x acc) xs
 
-  let l_1 = splitEvery 4 xs
-      (vec_l_1, seq_l_1) = partition (\x -> length x == 4) l_1
-      vect_l_1 = map (packVector . fromMaybe defaultTuple4 . tuplify4) vec_l_1
-      folded_vec = foldr f (broadcastVector seed) vect_l_1
-      folded_seq = foldr g seed (join seq_l_1)
-  in g (foldVector g folded_vec) folded_seq
+  -- let l_1 = splitEvery 4 xs
+  --     (vec_l_1, seq_l_1) = partition (\x -> length x == 4) l_1
+  --     vect_l_1 = map (packVector . fromMaybe defaultTuple4 . tuplify4) vec_l_1
+  --     folded_vec = foldr f (broadcastVector seed) vect_l_1
+  --     folded_seq = foldr g seed (join seq_l_1)
+  -- in g (foldVector g folded_vec) folded_seq
 
 foldDoubleX2 ::
      (DoubleX2 -> DoubleX2 -> DoubleX2)
@@ -90,7 +91,7 @@ foldDoubleX2 f g seed (VecList xs) =
       folded_seq = foldr g seed (join seq_l_1)
   in g (foldVector g folded_vec) folded_seq
 
--- Currently assuming same length list
+{-# INLINE zipFloatX4 #-}
 zipFloatX4 ::
      (FloatX4 -> FloatX4 -> FloatX4)
   -> (Float -> Float -> Float)
