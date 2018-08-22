@@ -62,6 +62,12 @@ dotVec xs ys =
     (toVecList xs)
     (toVecList ys)
 
+
+
+foo1 = fold (\x y -> x + y :: FloatX4) (\x y -> x + y :: Float) 0 (toVecList [1..10000000])
+
+foo2 :: Float
+foo2 = foldr (+) 0 [1..10000000]
 -- 16  0.2 [1,4,2,3,4,1,5,6,7,8,8,9,1,3,1,5,6]
 -- 32 0.2 [1,5,6,3,4,5,6,7,8,9,9,2,3,1,2,3,4,5,1,2,8,3,2,3,4,2,8,6,7,4,2,1,2]
 -- write dot product
@@ -70,5 +76,7 @@ main = do
   -- print $ evalPolyFold 0.2 [1, 1, 1, 1, 1]
   -- print $ evalPoly 0.2 [1, 1, 1, 1, 1]
   -- print $ evalPolyVec 0.2 [1, 1, 1, 1, 1]
-  print $ dotVec [1..10000000] [1..10000000]
-  --print $ dotVec [1,2,3,4,5] [1,2,3,4,5]
+  -- print $ dotVec [1..10000000] [1..10000000]
+  -- print $ dotVec [1,2,3,4,5] [1,2,3,4,5]
+  print $ foo1
+  --print $ foo2

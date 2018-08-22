@@ -27,6 +27,7 @@ class (Num a, Num b) =>
       ArithVecList a b
   where
   -- | The folding function should be commutative
+  -- (I know float addition is not commutative X(  )
   fold :: (a -> a -> a) -> (b -> b -> b) -> b -> VecList b -> b
   zipVec ::
        (a -> a -> a) -> (b -> b -> b) -> VecList b -> VecList b -> VecList b
@@ -69,6 +70,15 @@ foldFloatX4 f g seed (VecList xs') = go seed xs'
       let op = f (packVector (x1,x2,x3,x4)) (packVector (y1,y2,y3,y4))
        in go (g (foldVector g op) acc) xs
     go acc (x:xs) = go (g x acc) xs
+
+-- broadcast seems to have a heavier weight, maybe its harder to recurse with a vector
+-- foldFloatX4 f g seed (VecList xs') = go seed (broadcastVector seed) xs'
+--   where
+--     go acc vec_acc [] = g (foldVector g vec_acc) acc
+--     go acc vec_acc (x1:x2:x3:x4:xs) =
+--       let op = f (packVector (x1,x2,x3,x4)) vec_acc
+--        in go acc op xs
+--     go acc vec_acc (x:xs) = go (g x acc) vec_acc xs
 
   -- let l_1 = splitEvery 4 xs
   --     (vec_l_1, seq_l_1) = partition (\x -> length x == 4) l_1
