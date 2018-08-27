@@ -64,6 +64,7 @@ library
   hs-source-dirs:      src, src/example
   exposed-modules:     Data.Primitive
                      , Data.VecList
+                     , Data.VecArray
   other-modules:       Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Polynomial
@@ -80,6 +81,7 @@ executable polynomial
                      , Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Data.VecList
+                     , Data.VecArray
                      , Utils
   ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans -fprof-auto -prof
   default-language:    Haskell2010
