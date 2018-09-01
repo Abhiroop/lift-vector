@@ -6,11 +6,13 @@ module Data.VecList
   , toVecList
   , fold
   , zipVec
+  , fmap
   ) where
 
-import Control.Monad
+import Control.Monad hiding (fmap)
 import Data.Maybe
 import Data.Primitive
+import Prelude hiding (fmap)
 import Utils
 
 newtype VecList a =
@@ -31,6 +33,7 @@ class (Num a, Num b) =>
   fold :: (a -> a -> a) -> (b -> b -> b) -> b -> VecList b -> b
   zipVec ::
        (a -> a -> a) -> (b -> b -> b) -> VecList b -> VecList b -> VecList b
+  fmap :: (a -> a) -> (b -> b) -> VecList b -> VecList b
 
 {- | Why doesn't VecList be an instance of Foldable, Traversable and the other friendly typeclasses?
 
@@ -49,12 +52,14 @@ but all we have is (* -> *) -> Constraint
 
 -}
 instance ArithVecList FloatX4 Float where
-  fold = foldFloatX4
+  fold   = foldFloatX4
   zipVec = zipFloatX4
+  fmap   = fmapFloatX4
 
 instance ArithVecList DoubleX2 Double where
   fold = foldDoubleX2
   zipVec = zipDoubleX2
+  fmap   = fmapDoubleX2
 
 {-# INLINE foldFloatX4 #-}
 foldFloatX4 ::
@@ -135,3 +140,29 @@ zipDoubleX2 f g (VecList xs) (VecList ys) =
       vec_l = concatMap (untuplify2 . unpackVector) zipped_l
       seq_l = zipWith g (join seq_l_1) (join seq_l_2)
   in VecList $ vec_l ++ seq_l
+
+fmapFloatX4 :: (FloatX4 -> FloatX4)
+            -> (Float   -> Float)
+            -> VecList Float
+            -> VecList Float
+fmapFloatX4 f g (VecList xs') = VecList (go xs')
+  where
+    go [] = []
+    go (x1:x2:x3:x4:xs) =
+      let op = f (packVector (x1,x2,x3,x4))
+          (a,b,c,d) = unpackVector op
+       in a : b : c : d : (go xs)
+    go (x:xs) = (g x) : go xs
+
+fmapDoubleX2 :: (DoubleX2 -> DoubleX2)
+             -> (Double   -> Double)
+             -> VecList Double
+             -> VecList Double
+fmapDoubleX2 f g (VecList xs') = VecList (go xs')
+  where
+    go [] = []
+    go (x1:x2:xs) =
+      let op = f (packVector (x1,x2))
+          (a,b) = unpackVector op
+       in a : b : (go xs)
+    go (x:xs) = (g x) : go xs
