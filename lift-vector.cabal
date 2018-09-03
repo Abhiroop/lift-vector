@@ -67,6 +67,7 @@ library
                      , Data.VecArray
   other-modules:       Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
+                     , Dotproduct
                      , Polynomial
                      , Utils
   

@@ -4,6 +4,7 @@ module Polynomial where
 import Data.Primitive
 import Utils
 
+-- vectorised form
 sizeOfVec :: Int
 sizeOfVec = 4
 
@@ -26,7 +27,7 @@ evalPolyVec value coeffs = go (splitEvery sizeOfVec coeffs) (length coeffs)
           let t = pc * v
           in go' t v (l - 1)
 
-
+-- scalar form
 evalPoly :: Float -> [Float] -> Float
 evalPoly value coeffs = go coeffs (length coeffs - 1)
   where
