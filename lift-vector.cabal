@@ -58,6 +58,7 @@ library
   
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.10 && <4.11
+                     , array
 
   ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans
   -- Directories containing source files.
@@ -68,6 +69,7 @@ library
   other-modules:       Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Dotproduct
+                     , Matrixmultiplication
                      , Polynomial
                      , Utils
   
@@ -78,6 +80,7 @@ executable polynomial
   hs-source-dirs:      src, src/example
   main-is:             Main.hs
   build-depends:       base >=4.10 && <4.11
+                     , array
   other-modules:       Data.Primitive
                      , Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
