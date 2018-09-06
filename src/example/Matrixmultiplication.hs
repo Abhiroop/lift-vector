@@ -1,7 +1,7 @@
 module Matrixmultiplication where
 
 import Data.Primitive
-import Data.VecList
+import Data.Operations
 
 -- vectorised form
 matmultVec :: [[Float]] -> [[Float]] -> [[Float]]

@@ -1,13 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Data.VecList
-  ( VecList(..)
-  , fromVecList
-  , toVecList
-  , fold
-  , zipVec
-  , fmap
-  ) where
+module Data.VecList where
 
 import Control.Monad hiding (fmap)
 import Data.Maybe
@@ -25,16 +18,6 @@ toVecList = VecList
 fromVecList :: VecList a -> [a]
 fromVecList (VecList x) = x
 
-class (Num a, Num b) =>
-      ArithVecList a b
-  -- | The folding function should be commutative
-  -- (I know float addition is not commutative X(  )
-  where
-  fold :: (a -> a -> a) -> (b -> b -> b) -> b -> VecList b -> b
-  zipVec ::
-       (a -> a -> a) -> (b -> b -> b) -> VecList b -> VecList b -> VecList b
-  fmap :: (a -> a) -> (b -> b) -> VecList b -> VecList b
-
 {- | Why doesn't VecList be an instance of Foldable, Traversable and the other friendly typeclasses?
 
 Because say you have
@@ -51,15 +34,6 @@ so Foldable should be of kind  (* -> * -> * -> *) -> Constraint
 but all we have is (* -> *) -> Constraint
 
 -}
-instance ArithVecList FloatX4 Float where
-  fold = foldFloatX4
-  zipVec = zipFloatX4
-  fmap = fmapFloatX4
-
-instance ArithVecList DoubleX2 Double where
-  fold = foldDoubleX2
-  zipVec = zipDoubleX2
-  fmap = fmapDoubleX2
 
 {-# INLINE foldFloatX4 #-}
 foldFloatX4 ::

@@ -1,4 +1,3 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleInstances #-}
 
@@ -39,39 +38,43 @@ deepSeqArray :: (Shape sh, U.Unbox e) => VecArray sh e -> b -> b
 deepSeqArray (VecArray sh vec) x
   = sh `deepSeq` vec `seq` x
 
-{-# INLINE fromList #-}
-fromList :: (Shape sh, U.Unbox e)
+{-# INLINE toVecArray #-}
+toVecArray :: (Shape sh, U.Unbox e)
          => sh -> [e] -> VecArray sh e
-fromList sh xs
+toVecArray sh xs
  = let len = length xs
     in if len /= size sh
        then error "Mismatch between the length of the list and the shape provided!"
        else VecArray sh (U.fromList xs)
 
-{-# INLINE toList #-}
-toList :: (Shape sh, U.Unbox e)
+{-# INLINE fromVecArray #-}
+fromVecArray :: (Shape sh, U.Unbox e)
          => VecArray sh e -> [e]
-toList (VecArray _ vec) = U.toList vec
+fromVecArray (VecArray _ vec) = U.toList vec
 
 type Array  = VecArray DIM1
 type Matrix = VecArray DIM2
 
--- class (Num a, Num b) =>
---       ArithVector t a b
---   where
---   fold :: (a -> a -> a) -> (b -> b -> b) -> b -> t b -> b
---   zipVec ::
---        (a -> a -> a) -> (b -> b -> b) -> t b -> t b -> t b
---   fmap :: (a -> a) -> (b -> b) -> t b -> t b
+foldFloatX4 :: (Shape sh) =>
+               (FloatX4 -> FloatX4 -> FloatX4)
+            -> (Float   -> Float   -> Float)
+            -> Float
+            -> VecArray sh Float
+            -> Float
+foldFloatX4 = undefined
 
-
--- instance (Shape sh) => ArithVector (VecArray sh) FloatX4 Float where
---   fmap = fmapFloatX4
+zipFloatX4 :: (Shape sh) =>
+              (FloatX4 -> FloatX4 -> FloatX4)
+           -> (Float   -> Float   -> Float)
+           -> VecArray sh Float
+           -> VecArray sh Float
+           -> VecArray sh Float
+zipFloatX4 = undefined
 
 
 fmapFloatX4 :: (Shape sh) =>
   (FloatX4 -> FloatX4) -> (Float -> Float) -> VecArray sh Float -> VecArray sh Float
-fmapFloatX4 f g (VecArray sh vec) = fromList sh $ go (size sh) 0
+fmapFloatX4 f g (VecArray sh vec) = toVecArray sh $ go (size sh) 0
   where
     go s i
       | (i + 4) < s =

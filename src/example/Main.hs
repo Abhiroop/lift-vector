@@ -3,7 +3,8 @@
 module Main where
 
 import Data.Primitive
-import Data.VecList
+import Data.Operations
+import qualified Data.VecList as L
 import Data.VecArray
 import Utils
 
@@ -62,12 +63,12 @@ dotVec xs ys
   zipVec
     (\x y -> x * y :: FloatX4)
     (\x y -> x * y :: Float)
-    (toVecList xs)
-    (toVecList ys)
+    (L.toVecList xs)
+    (L.toVecList ys)
 
 multiply :: [Float] -> Float
 multiply xs =
-  fold (\x y -> x * y :: FloatX4) (\x y -> x * y :: Float) 0 (toVecList xs)
+  fold (\x y -> x * y :: FloatX4) (\x y -> x * y :: Float) 0 (L.toVecList xs)
 
 -- 16  0.2 [1,4,2,3,4,1,5,6,7,8,8,9,1,3,1,5,6]
 -- 32 0.2 [1,5,6,3,4,5,6,7,8,9,9,2,3,1,2,3,4,5,1,2,8,3,2,3,4,2,8,6,7,4,2,1,2]
@@ -87,8 +88,8 @@ matmultVec a b =
   zipVec
     (\x y -> x * y :: FloatX4)
     (\x y -> x * y :: Float)
-    (toVecList ar)
-    (toVecList bc)
+    (L.toVecList ar)
+    (L.toVecList bc)
   | bc <- (transpose b)
   ]
   | ar <- a
@@ -100,16 +101,16 @@ foo1 =
     (\x y -> x + y :: FloatX4)
     (\x y -> x + y :: Float)
     0
-    (toVecList [1 .. 15000000])
+    (L.toVecList [1 .. 15000000])
 
 foo2 :: Float
 foo2 = foldr (+) 0 [1 .. 15000000]
 
 bar1 :: Array Int
-bar1 = fromList (Z :. 10) [1..10]
+bar1 = toVecArray (Z :. 10) [1..10]
 
 bar2 :: Matrix Int
-bar2 = fromList (Z :. 3 :. 5) [1..15]
+bar2 = toVecArray (Z :. 3 :. 5) [1..15]
 
 
 main :: IO ()

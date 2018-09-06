@@ -64,9 +64,12 @@ library
   -- Directories containing source files.
   hs-source-dirs:      src, src/example
   exposed-modules:     Data.Primitive
-                     , Data.VecList
+                     , Data.Operations
+
+
+  other-modules:       Data.VecList
                      , Data.VecArray
-  other-modules:       Data.Internal.FloatX4
+                     , Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Dotproduct
                      , Matrixmultiplication
@@ -82,6 +85,7 @@ executable polynomial
   build-depends:       base >=4.10 && <4.11
                      , vector
   other-modules:       Data.Primitive
+                     , Data.Operations
                      , Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Data.VecList

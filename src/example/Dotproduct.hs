@@ -1,7 +1,7 @@
 module Dotproduct where
 
 import Data.Primitive
-import Data.VecList
+import Data.Operations
 -- vectorised form
 dotVec :: [Float] -> [Float] -> Float
 dotVec xs ys =
