@@ -6,6 +6,7 @@ import Data.Primitive
 import Data.Operations
 import qualified Data.VecList as L
 import Data.VecArray
+import Prelude hiding (fmap)
 import Utils
 
 -- This module is for experiments only
@@ -112,10 +113,18 @@ bar1 = toVecArray (Z :. 10) [1..10]
 bar2 :: Matrix Int
 bar2 = toVecArray (Z :. 3 :. 5) [1..15]
 
+foo3 :: Matrix Float
+foo3 = toVecArray (Z :. 4 :. 4) [1..16]
+
+foo4 :: Matrix Float
+foo4 = fmap (\ x -> x + 1 :: FloatX4)
+            (\ x -> x + 1 :: Float)
+            foo3
 
 main :: IO ()
 main = do
   print $ bar2 ! (Z :. 1 :. 1)
+  print $ foo4
   --print $ foo1
   -- let l    = replicate 80000 7
   --     arr1 = replicate 80000 l

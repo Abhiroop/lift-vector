@@ -8,7 +8,7 @@ import GHC.Base (quotInt, remInt)
 
 import qualified Data.Vector.Unboxed as U
 
-data VecArray sh a = VecArray !sh (U.Vector a)
+data VecArray sh a = VecArray !sh (U.Vector a) deriving Show
 
 -- | index of the element O(1)
 {-# INLINE linearIndex #-}
@@ -61,7 +61,18 @@ foldFloatX4 :: (Shape sh) =>
             -> Float
             -> VecArray sh Float
             -> Float
-foldFloatX4 = undefined
+foldFloatX4 f g seed (VecArray sh vec) = go seed (broadcastVector seed) (size sh) 0
+  where
+    go acc vec_acc s i
+      | (i + 4) < s =
+        let e1 = vec U.! i
+            e2 = vec U.! (i + 1)
+            e3 = vec U.! (i + 2)
+            e4 = vec U.! (i + 3)
+            op = f (packVector (e1,e2,e3,e4)) vec_acc
+         in go acc op s (i + 4)
+      | i == s = g (foldVector g vec_acc) acc
+      | otherwise = go (g (vec U.! i) acc) vec_acc s (i + 1)
 
 zipFloatX4 :: (Shape sh) =>
               (FloatX4 -> FloatX4 -> FloatX4)
@@ -69,8 +80,27 @@ zipFloatX4 :: (Shape sh) =>
            -> VecArray sh Float
            -> VecArray sh Float
            -> VecArray sh Float
-zipFloatX4 = undefined
-
+zipFloatX4 f g (VecArray sh vec1) (VecArray sh' vec2)
+  | sh /= sh' = error "The dimensions of the array don't match"
+  | otherwise = toVecArray sh $ go (size sh) 0
+    where
+      go s i
+        | (i + 4) < s =
+          let e1 = vec1 U.! i
+              e2 = vec1 U.! (i + 1)
+              e3 = vec1 U.! (i + 2)
+              e4 = vec1 U.! (i + 3)
+              f1 = vec2 U.! i
+              f2 = vec2 U.! (i + 1)
+              f3 = vec2 U.! (i + 2)
+              f4 = vec2 U.! (i + 3)
+              vect1 = packVector (e1,e2,e3,e4) :: FloatX4
+              vect2 = packVector (f1,f2,f3,f4) :: FloatX4
+              op = f vect1 vect2
+              (x1, x2, x3, x4) = unpackVector op
+          in x1 : x2 : x3 : x4 : go s (i + 4)
+        | i == s = []
+        | otherwise = (g (vec1 U.! i) (vec2 U.! i)) : go s (i + 1)
 
 fmapFloatX4 :: (Shape sh) =>
   (FloatX4 -> FloatX4) -> (Float -> Float) -> VecArray sh Float -> VecArray sh Float
@@ -89,6 +119,62 @@ fmapFloatX4 f g (VecArray sh vec) = toVecArray sh $ go (size sh) 0
       | i == s = []
       | otherwise = (g $ vec U.! i) : go s (i + 1)
 
+foldDoubleX2 :: (Shape sh) =>
+               (DoubleX2 -> DoubleX2 -> DoubleX2)
+            -> (Double   -> Double   -> Double)
+            -> Double
+            -> VecArray sh Double
+            -> Double
+foldDoubleX2 f g seed (VecArray sh vec) = go seed (broadcastVector seed) (size sh) 0
+  where
+    go acc vec_acc s i
+      | (i + 2) < s =
+        let e1 = vec U.! i
+            e2 = vec U.! (i + 1)
+            op = f (packVector (e1,e2)) vec_acc
+         in go acc op s (i + 2)
+      | i == s = g (foldVector g vec_acc) acc
+      | otherwise = go (g (vec U.! i) acc) vec_acc s (i + 1)
+
+zipDoubleX2 :: (Shape sh) =>
+              (DoubleX2 -> DoubleX2 -> DoubleX2)
+           -> (Double   -> Double   -> Double)
+           -> VecArray sh Double
+           -> VecArray sh Double
+           -> VecArray sh Double
+zipDoubleX2 f g (VecArray sh vec1) (VecArray sh' vec2)
+  | sh /= sh' = error "The dimensions of the array don't match"
+  | otherwise = toVecArray sh $ go (size sh) 0
+    where
+      go s i
+        | (i + 2) < s =
+          let e1 = vec1 U.! i
+              e2 = vec1 U.! (i + 1)
+              f1 = vec2 U.! i
+              f2 = vec2 U.! (i + 1)
+              vect1 = packVector (e1,e2) :: DoubleX2
+              vect2 = packVector (f1,f2) :: DoubleX2
+              op = f vect1 vect2
+              (x1, x2) = unpackVector op
+          in x1 : x2 : go s (i + 2)
+        | i == s = []
+        | otherwise = (g (vec1 U.! i) (vec2 U.! i)) : go s (i + 1)
+
+fmapDoubleX2 :: (Shape sh) =>
+  (DoubleX2 -> DoubleX2) -> (Double -> Double) -> VecArray sh Double -> VecArray sh Double
+fmapDoubleX2 f g (VecArray sh vec) = toVecArray sh $ go (size sh) 0
+  where
+    go s i
+      | (i + 2) < s =
+        let e1 = vec U.! i
+            e2 = vec U.! (i + 1)
+            vect = packVector (e1,e2) :: DoubleX2
+            op = f vect
+            (x1, x2) = unpackVector op
+         in x1 : x2 : go s (i + 2)
+      | i == s = []
+      | otherwise = (g $ vec U.! i) : go s (i + 1)
+
 
 
 -------------Shape Polymorphism from Repa/Accelerate/Ypnos etc-----------------
@@ -96,7 +182,7 @@ fmapFloatX4 f g (VecArray sh vec) = toVecArray sh $ go (size sh) 0
 data Z = Z
   deriving (Show, Read, Eq, Ord) -- rank-0
 
-data tail :. head = tail :. head
+data tail :. head = !tail :. !head
   deriving (Show, Read, Eq, Ord) --increase rank by 1
 
 type DIM0 = Z

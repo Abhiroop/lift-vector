@@ -1,7 +1,12 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Data.Operations
-  ( fold
+  ( A.Array
+  , A.Matrix
+  , A.Shape
+  , A.Z
+  , L.VecList
+  , fold
   , zipVec
   , fmap
   , fromContainer
@@ -31,6 +36,12 @@ instance (A.Shape sh) => ArithVector (A.VecArray sh) FloatX4 Float where
   fold   = A.foldFloatX4
   zipVec = A.zipFloatX4
   fmap   = A.fmapFloatX4
+  fromContainer = A.fromVecArray
+
+instance (A.Shape sh) => ArithVector (A.VecArray sh) DoubleX2 Double where
+  fold   = A.foldDoubleX2
+  zipVec = A.zipDoubleX2
+  fmap   = A.fmapDoubleX2
   fromContainer = A.fromVecArray
 
 -- VecList instances below

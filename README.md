@@ -13,13 +13,13 @@ fmap :: (a -> a) -> (b -> b) -> t b -> t b
 fromContainer :: t b -> [b]
 ```
 It accepts a vector function as the first argument and the corresponding scalar function as the second argument.
-All of the functions are also overloaded, so for multiply elements of a list you would write
+All of the functions are also overloaded, so for multiplying all the  elements of a structure you should write
 
 ```haskell
 fold (\x y -> x * y :: FloatX4) (\x y -> x * y :: Float) 1 <vector data structure here>
 ```
 
-the <vector data structure> mentioned can be a 
+the *vector data structure* mentioned can be a 
 
 - Vector List which is plainly a wrapper around a list
 - Vector array which is a shape polymorphic unboxed array
