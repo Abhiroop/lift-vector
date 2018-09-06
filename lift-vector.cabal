@@ -58,7 +58,7 @@ library
   
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.10 && <4.11
-                     , array
+                     , vector
 
   ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans
   -- Directories containing source files.
@@ -80,12 +80,12 @@ executable polynomial
   hs-source-dirs:      src, src/example
   main-is:             Main.hs
   build-depends:       base >=4.10 && <4.11
-                     , array
+                     , vector
   other-modules:       Data.Primitive
                      , Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Data.VecList
                      , Data.VecArray
                      , Utils
-  ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans -fprof-auto -prof
+  ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans -fprof-auto -prof -rtsopts -O2
   default-language:    Haskell2010
