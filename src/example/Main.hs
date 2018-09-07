@@ -7,6 +7,7 @@ import Data.Operations
 import qualified Data.VecList as L
 import Data.VecArray
 import Prelude hiding (fmap)
+import Pearson
 import Utils
 
 -- This module is for experiments only
@@ -54,6 +55,9 @@ evalPolyFold value coeffs =
 dotp :: [Float] -> [Float] -> Float
 dotp xs ys = sum $ zipWith (*) xs ys
 
+dotp' :: [Float] -> [Float] -> Float
+dotp' xs ys = foldr (+) 0 $ zipWith (*) xs ys
+
 -- Can we hide this using template haskell?
 dotVec :: [Float] -> [Float] -> Float
 dotVec xs ys
@@ -66,6 +70,19 @@ dotVec xs ys
     (\x y -> x * y :: Float)
     (L.toVecList xs)
     (L.toVecList ys)
+
+dotVec' :: [Float] -> [Float] -> Float
+dotVec' xs ys
+  -- sum $
+  -- fromVecList $
+ = let l1 = length xs
+       l2 = length ys
+    in fold (\x y -> x + y :: FloatX4) (\x y -> x + y :: Float) 0 $
+       zipVec
+        (\x y -> x * y :: FloatX4)
+        (\x y -> x * y :: Float)
+        (toVecArray (Z :. l1) xs)
+        (toVecArray (Z :. l2) ys)
 
 multiply :: [Float] -> Float
 multiply xs =
@@ -123,8 +140,13 @@ foo4 = fmap (\ x -> x + 1 :: FloatX4)
 
 main :: IO ()
 main = do
-  print $ bar2 ! (Z :. 1 :. 1)
-  print $ foo4
+  --print $ bar2 ! (Z :. 1 :. 1)
+  --print $ foo4
+  --print $ dotp [1..4] [5..8]
+  --print $ dotVec' [1..320] [321..640]
+  print $ pearsonVec [1..800000] [800001..1600000] 
+  --print $ pearsonVec [1..4] [1005,-1036,711,18]
+  --print $ dotVec' [1..4] [5..8]
   --print $ foo1
   -- let l    = replicate 80000 7
   --     arr1 = replicate 80000 l

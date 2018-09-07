@@ -73,6 +73,7 @@ library
                      , Data.Internal.DoubleX2
                      , Dotproduct
                      , Matrixmultiplication
+                     , Pearson
                      , Polynomial
                      , Utils
   
@@ -90,6 +91,7 @@ executable polynomial
                      , Data.Internal.DoubleX2
                      , Data.VecList
                      , Data.VecArray
+                     , Pearson
                      , Utils
   ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans -fprof-auto -prof -rtsopts -O2
   default-language:    Haskell2010
