@@ -17,6 +17,20 @@ matmultVec a b =
   | ar <- a
   ]
 
+matmultVec' :: [[Float]] -> [[Float]] -> [[Float]]
+matmultVec' a@(f:_) b =
+  let l = length f
+  in [ [ fold (\x y -> x + y :: FloatX4) (\x y -> x + y :: Float) 0 $
+         zipVec
+         (\x y -> x * y :: FloatX4)
+         (\x y -> x * y :: Float)
+         (toVecArray (Z :. l) ar)
+         (toVecArray (Z :. l) bc)
+       | bc <- (transpose b)
+       ]
+     | ar <- a
+     ]
+
 -- scalar form
 matmult :: [[Float]] -> [[Float]] -> [[Float]]
 matmult a b = [[sum $ zipWith (*) ar bc | bc <- (transpose b)] | ar <- a]

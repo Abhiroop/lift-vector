@@ -1,23 +1,24 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Data.Operations
-  ( A.Array
-  , A.Matrix
-  , A.Shape
-  , A.Z
+  ( Array
+  , Matrix
+  , Shape
+  , Z (..)
+  , (:.) (..)
   , L.VecList
   , fold
   , zipVec
   , fmap
   , L.toVecList
   , L.fromVecList
-  , A.toVecArray
-  , A.fromVecArray) where
+  , toVecArray
+  , fromVecArray) where
 
 import Data.Primitive
+import Data.VecArray
 import Prelude hiding (fmap)
 
-import qualified Data.VecArray as A
 import qualified Data.VecList  as L
 
 -- | This module provide an abstraction over all operations on vector data structures.
@@ -32,15 +33,15 @@ class (Num a, Num b) =>
   fmap :: (a -> a) -> (b -> b) -> t b -> t b
 
 -- VecArray instances below
-instance (A.Shape sh) => ArithVector (A.VecArray sh) FloatX4 Float where
-  fold   = A.foldFloatX4
-  zipVec = A.zipFloatX4
-  fmap   = A.fmapFloatX4
+instance (Shape sh) => ArithVector (VecArray sh) FloatX4 Float where
+  fold   = foldFloatX4
+  zipVec = zipFloatX4
+  fmap   = fmapFloatX4
 
-instance (A.Shape sh) => ArithVector (A.VecArray sh) DoubleX2 Double where
-  fold   = A.foldDoubleX2
-  zipVec = A.zipDoubleX2
-  fmap   = A.fmapDoubleX2
+instance (Shape sh) => ArithVector (VecArray sh) DoubleX2 Double where
+  fold   = foldDoubleX2
+  zipVec = zipDoubleX2
+  fmap   = fmapDoubleX2
 
 -- VecList instances below
 instance ArithVector L.VecList FloatX4 Float where

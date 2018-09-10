@@ -59,7 +59,8 @@ library
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.10 && <4.11
                      , vector
-
+                     , random >= 1.1
+                     , deepseq >= 1.4
   ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans
   -- Directories containing source files.
   hs-source-dirs:      src, src/example
@@ -85,13 +86,18 @@ executable polynomial
   main-is:             Main.hs
   build-depends:       base >=4.10 && <4.11
                      , vector
+                     , random >= 1.1
+                     , deepseq >= 1.4
   other-modules:       Data.Primitive
                      , Data.Operations
                      , Data.Internal.FloatX4
                      , Data.Internal.DoubleX2
                      , Data.VecList
                      , Data.VecArray
+                     , Dotproduct
+                     , Matrixmultiplication
                      , Pearson
+                     , Polynomial
                      , Utils
   ghc-options:         -Wall -mavx -msse4 -fno-warn-orphans -fprof-auto -prof -rtsopts -O2
   default-language:    Haskell2010

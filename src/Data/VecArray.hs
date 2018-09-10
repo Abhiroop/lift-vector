@@ -55,6 +55,8 @@ fromVecArray (VecArray _ vec) = U.toList vec
 type Array  = VecArray DIM1
 type Matrix = VecArray DIM2
 
+
+{-# INLINE foldFloatX4 #-}
 foldFloatX4 :: (Shape sh) =>
                (FloatX4 -> FloatX4 -> FloatX4)
             -> (Float   -> Float   -> Float)
@@ -74,6 +76,7 @@ foldFloatX4 f g seed (VecArray sh vec) = go seed (broadcastVector seed) (size sh
       | i == s = g (foldVector g vec_acc) acc
       | otherwise = go (g (vec U.! i) acc) vec_acc s (i + 1)
 
+{-# INLINE zipFloatX4 #-}
 zipFloatX4 :: (Shape sh) =>
               (FloatX4 -> FloatX4 -> FloatX4)
            -> (Float   -> Float   -> Float)
@@ -102,6 +105,7 @@ zipFloatX4 f g (VecArray sh vec1) (VecArray sh' vec2)
         | i == s = []
         | otherwise = (g (vec1 U.! i) (vec2 U.! i)) : go s (i + 1)
 
+{-# INLINE fmapFloatX4 #-}
 fmapFloatX4 :: (Shape sh) =>
   (FloatX4 -> FloatX4) -> (Float -> Float) -> VecArray sh Float -> VecArray sh Float
 fmapFloatX4 f g (VecArray sh vec) = toVecArray sh $ go (size sh) 0
@@ -119,6 +123,7 @@ fmapFloatX4 f g (VecArray sh vec) = toVecArray sh $ go (size sh) 0
       | i == s = []
       | otherwise = (g $ vec U.! i) : go s (i + 1)
 
+{-# INLINE foldDoubleX2 #-}
 foldDoubleX2 :: (Shape sh) =>
                (DoubleX2 -> DoubleX2 -> DoubleX2)
             -> (Double   -> Double   -> Double)
@@ -136,6 +141,7 @@ foldDoubleX2 f g seed (VecArray sh vec) = go seed (broadcastVector seed) (size s
       | i == s = g (foldVector g vec_acc) acc
       | otherwise = go (g (vec U.! i) acc) vec_acc s (i + 1)
 
+{-# INLINE zipDoubleX2 #-}
 zipDoubleX2 :: (Shape sh) =>
               (DoubleX2 -> DoubleX2 -> DoubleX2)
            -> (Double   -> Double   -> Double)
@@ -160,6 +166,7 @@ zipDoubleX2 f g (VecArray sh vec1) (VecArray sh' vec2)
         | i == s = []
         | otherwise = (g (vec1 U.! i) (vec2 U.! i)) : go s (i + 1)
 
+{-# INLINE fmapDoubleX2 #-}
 fmapDoubleX2 :: (Shape sh) =>
   (DoubleX2 -> DoubleX2) -> (Double -> Double) -> VecArray sh Double -> VecArray sh Double
 fmapDoubleX2 f g (VecArray sh vec) = toVecArray sh $ go (size sh) 0
