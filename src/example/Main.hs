@@ -141,20 +141,34 @@ main = do
   -- let csv = (show x) <> "," <> (show y) <>"," <> (show z) <> "," <> (show mat_rows)
   -- writeFile "/Users/abhiroop/Desktop/test.csv" $ heading <> csv
 
-  let heading = "List,Lift Vector,Unlifted Type,Time in seconds\n"
-  seed <- newStdGen
-  let datasize = [513,1025,2049,4097, 8193]--,16393,49177,98353]--,1000000,2000000,3000000,4000000,5000000]
+  -- let heading = "List,Lift Vector,Unlifted Type,Time in seconds\n"
+  -- seed <- newStdGen
+  -- let datasize = [2000,3000,5000,7000,9000]
+  -- ts <- forM datasize $ \i -> do
+  --         num <- randomIO :: IO Float
+  --         let r = randomlist i seed
+  --         x <- timeIt_ (evalPoly num) r
+  --         y <- timeIt_ (evalPolyVec  num) r
+  --         z <- timeIt_ (evalPolyVec' num) r
+  --         return $ (show x) <> "," <> (show y) <>"," <> (show z) <> "," <> (show i)
+  -- writeFile "/Users/abhiroop/Desktop/test.csv" $ heading <> (intercalate "\n" ts)
+
+  let heading = "List,Vector List,Vector Array,Time in seconds\n"
+  seed1 <- newStdGen
+  seed2 <- newStdGen
+  let datasize = [8000000]--[10000,20000,50000,100000,500000]
   ts <- forM datasize $ \i -> do
-          num <- randomIO :: IO Float
-          let r = randomlist i seed
-          x <- timeIt_ (evalPolyFold num) r
-          y <- timeIt_ (evalPolyVec  num) r
-          z <- timeIt_ (evalPolyVec' num) r
+          let r1 = randomlist i seed1
+              r2 = randomlist i seed2
+          x <- timeIt_ (pearson r1) r2
+          y <- timeIt_ (pearsonVec  r1) r2
+          z <- timeIt_ (pearsonVec' r1) r2
           return $ (show x) <> "," <> (show y) <>"," <> (show z) <> "," <> (show i)
   writeFile "/Users/abhiroop/Desktop/test.csv" $ heading <> (intercalate "\n" ts)
 
 
-
+  -- print $ evalPoly 0.5 [1..30000]
+  -- print $ evalPolyVec' 0.5 [1..30000]
 
   -- let datasize = 800000
   -- x <- timeIt_ (pearson [1..800000]) [800001..1600000]
